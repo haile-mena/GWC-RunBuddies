@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="/static/style/survey.css" rel="stylesheet" type="text/css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Runner Survey</title>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">Let's get to know you!</h1>
+        
+        <form method="POST" action="{{ url_for('survey') }}">
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Running Experience Level</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="beginner" name="experience_level" value="beginner" required>
+                            <label for="beginner">Beginner (0-1 years)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="intermediate" name="experience_level" value="intermediate">
+                            <label for="intermediate">Intermediate (1-3 years)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="advanced" name="experience_level" value="advanced">
+                            <label for="advanced">Advanced (3-5 years)</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="expert" name="experience_level" value="expert">
+                            <label for="expert">Expert (5+ years)</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Weekly Running Distance</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="distance1" name="weekly_distance" value="0-10" required>
+                            <label for="distance1">0-10 miles</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="distance2" name="weekly_distance" value="11-20">
+                            <label for="distance2">11-20 miles</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="distance3" name="weekly_distance" value="21-30">
+                            <label for="distance3">21-30 miles</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="distance4" name="weekly_distance" value="31+">
+                            <label for="distance4">31+ miles</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Preferred Running Terrain (select all that apply)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="road" name="preferred_terrain" value="road">
+                            <label for="road">Road</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="trail" name="preferred_terrain" value="trail">
+                            <label for="trail">Trail</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="track" name="preferred_terrain" value="track">
+                            <label for="track">Track</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="treadmill" name="preferred_terrain" value="treadmill">
+                            <label for="treadmill">Treadmill</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label for="typical_pace">Typical Running Pace</label>
+                    <select id="typical_pace" name="typical_pace" required>
+                        <option value="">Select your typical pace</option>
+                        <option value="under-7">Under 7 min/mile</option>
+                        <option value="7-8">7-8 min/mile</option>
+                        <option value="8-9">8-9 min/mile</option>
+                        <option value="9-10">9-10 min/mile</option>
+                        <option value="10-11">10-11 min/mile</option>
+                        <option value="11-12">11-12 min/mile</option>
+                        <option value="over-12">Over 12 min/mile</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="running_frequency">How often do you run?</label>
+                    <select id="running_frequency" name="running_frequency" required>
+                        <option value="">Select frequency</option>
+                        <option value="1-2">1-2 times per week</option>
+                        <option value="3-4">3-4 times per week</option>
+                        <option value="5-6">5-6 times per week</option>
+                        <option value="daily">Daily</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="preferred_time">Preferred Running Time</label>
+                    <select id="preferred_time" name="preferred_time" required>
+                        <option value="">Select preferred time</option>
+                        <option value="early_morning">Early Morning (Before 8am)</option>
+                        <option value="morning">Morning (8am-11am)</option>
+                        <option value="afternoon">Afternoon (11am-4pm)</option>
+                        <option value="evening">Evening (4pm-8pm)</option>
+                        <option value="night">Night (After 8pm)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Race Experience</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="no_races" name="race_experience" value="none" required>
+                            <label for="no_races">Never raced</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="5k" name="race_experience" value="5k">
+                            <label for="5k">5K races</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="10k" name="race_experience" value="10k">
+                            <label for="10k">10K races</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="half" name="race_experience" value="half">
+                            <label for="half">Half Marathon</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="full" name="race_experience" value="full">
+                            <label for="full">Marathon or longer</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Primary Running Goal</label>
+                    <div class="radio-group">
+                        <div class="radio-item">
+                            <input type="radio" id="goal1" name="primary_goal" value="general_fitness" required>
+                            <label for="goal1">General fitness</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="goal2" name="primary_goal" value="weight_loss">
+                            <label for="goal2">Weight loss</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="goal3" name="primary_goal" value="speed">
+                            <label for="goal3">Improve speed</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="goal4" name="primary_goal" value="distance">
+                            <label for="goal4">Increase distance</label>
+                        </div>
+                        <div class="radio-item">
+                            <input type="radio" id="goal5" name="primary_goal" value="race">
+                            <label for="goal5">Race completion</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Cross-Training Activities (select all that apply)</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="cycling" name="cross_training" value="cycling">
+                            <label for="cycling">Cycling</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="swimming" name="cross_training" value="swimming">
+                            <label for="swimming">Swimming</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="yoga" name="cross_training" value="yoga">
+                            <label for="yoga">Yoga</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="strength" name="cross_training" value="strength">
+                            <label for="strength">Strength Training</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="injury_status">Current Injury Status</label>
+                    <select id="injury_status" name="injury_status" required>
+                        <option value="">Select status</option>
+                        <option value="none">No injuries</option>
+                        <option value="recovering">Recovering from injury</option>
+                        <option value="minor">Minor aches/pains</option>
+                        <option value="chronic">Chronic condition</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
