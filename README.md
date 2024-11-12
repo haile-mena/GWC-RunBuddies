@@ -9,9 +9,9 @@ A web application to support runners of any experience in finding resources and 
 3.) Ask questions to a chatbox
 
 ## Features
-- [ ] Sign-up page  
-- [ ] Login page 
+- [x] Sign-up page  
+- [x] Login page 
 - [ ] Message page
-- [ ] New user survey page
-- [ ] User database
+- [x] New user survey page
+- [x] User database
 - [ ] Chatbot page
