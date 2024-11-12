@@ -11,7 +11,6 @@ A web application to support runners of any experience in finding resources and 
 ## Features
 - [x] Sign-up page  
 - [x] Login page 
-- [ ] Message page
+- [x] Message page
 - [x] New user survey page
 - [x] User database
-- [ ] Chatbot page
