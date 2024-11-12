@@ -59,7 +59,7 @@ def login():
 def logout():
     logout_user()
     session.pop('username', None)
-    return redirect(url_for('home'))
+    return render_template('index.html')
 
 @app.route('/join', methods=['GET', 'POST'])
 def join():
@@ -159,7 +159,7 @@ def get_messages():
     ]
     return jsonify({"messages": messages})
 
-def check_existing_user(username=None, email=None):
+def check_existing_user(username, email):
     conn = sqlite3.connect('myDatabase.db')
     cursor = conn.cursor()
     
@@ -167,12 +167,14 @@ def check_existing_user(username=None, email=None):
         cursor.execute('SELECT 1 FROM users WHERE username = ? LIMIT 1', (username,))
         if cursor.fetchone():
             conn.close()
+            print('username is taken')
             return True, 'username'
             
     if email:
         cursor.execute('SELECT 1 FROM users WHERE email = ? LIMIT 1', (email,))
         if cursor.fetchone():
             conn.close()
+            print('email is taken')
             return True, 'email'
     
     conn.close()
@@ -338,6 +340,59 @@ def update_user_settings():
         conn.rollback()
         return jsonify({"error": str(e)}), 500
         
+    finally:
+        conn.close()
+
+@app.route('/api/chat/<int:match_id>', methods=['GET'])
+@login_required
+def get_chat_messages(match_id):
+    conn = sqlite3.connect('myDatabase.db')
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # Get current user's ID
+    cursor.execute("SELECT id FROM users WHERE username = ?", (session['username'],))
+    user_id = cursor.fetchone()['id']
+    
+    # Get chat messages
+    cursor.execute("""
+        SELECT m.*, u.username as sender_name
+        FROM messages m
+        JOIN users u ON m.sender_id = u.id
+        WHERE (m.sender_id = ? AND m.receiver_id = ?)
+        OR (m.sender_id = ? AND m.receiver_id = ?)
+        ORDER BY m.timestamp ASC
+    """, (user_id, match_id, match_id, user_id))
+    
+    messages = [dict(row) for row in cursor.fetchall()]
+    conn.close()
+    
+    return jsonify({"messages": messages})
+
+@app.route('/api/chat/<int:match_id>', methods=['POST'])
+@login_required
+def send_message(match_id):
+    data = request.get_json()
+    message_content = data.get('message')
+    
+    conn = sqlite3.connect('myDatabase.db')
+    cursor = conn.cursor()
+    
+    # Get sender ID
+    cursor.execute("SELECT id FROM users WHERE username = ?", (session['username'],))
+    sender_id = cursor.fetchone()[0]
+    
+    try:
+        cursor.execute("""
+            INSERT INTO messages (sender_id, receiver_id, content, timestamp)
+            VALUES (?, ?, ?, CURRENT_TIMESTAMP)
+        """, (sender_id, match_id, message_content))
+        
+        conn.commit()
+        return jsonify({"success": True})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({"error": str(e)}), 500
     finally:
         conn.close()
 

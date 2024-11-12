@@ -137,3 +137,62 @@ body {
     display: flex;
     justify-content: space-between;
 }
+
+.settings-container{
+    margin-top: 20px;
+}
+
+.btn-primary {
+    background-color: #1d344cc3;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #1d344b;
+}
+
+.btn-secondary {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #f1f2f3;
+}
+
+.settings-group h3 {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.settings-group input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.settings-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.setting-group #race-participation {
+    background-color: #194b7d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+}

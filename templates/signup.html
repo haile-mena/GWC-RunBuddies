@@ -22,7 +22,7 @@
 
         <form method="POST" action="{{ url_for('join') }}" onsubmit="return validateForm()">
             {% if error %}
-                <div class="flash-message error">{{ error_message }}</div>
+                <div class="flash-message error">{{ message }}</div>
             {% endif %}
             <div class="form-group">
                 <label for="username">Username</label>

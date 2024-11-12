@@ -49,6 +49,36 @@ CREATE TABLE IF NOT EXISTS running_preferences (
     FOREIGN KEY (user_id) REFERENCES users(id)
 );
 
+-- Messages table
+CREATE TABLE IF NOT EXISTS messages (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    sender_id INTEGER NOT NULL,
+    receiver_id INTEGER NOT NULL,
+    content TEXT NOT NULL,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    read_status BOOLEAN DEFAULT 0,
+    FOREIGN KEY (sender_id) REFERENCES users(id),
+    FOREIGN KEY (receiver_id) REFERENCES users(id)
+);
+
+-- Create indexes for better query performance
+CREATE INDEX IF NOT EXISTS idx_messages_sender ON messages(sender_id);
+CREATE INDEX IF NOT EXISTS idx_messages_receiver ON messages(receiver_id);
+CREATE INDEX IF NOT EXISTS idx_messages_timestamp ON messages(timestamp);
+
+-- Optional: Create a matches table if you want to track user matches separately
+CREATE TABLE IF NOT EXISTS matches (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user1_id INTEGER NOT NULL,
+    user2_id INTEGER NOT NULL,
+    match_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT DEFAULT 'active', -- Could be 'active', 'blocked', 'deleted', etc.
+    FOREIGN KEY (user1_id) REFERENCES users(id),
+    FOREIGN KEY (user2_id) REFERENCES users(id),
+    -- Ensure unique matches between users
+    UNIQUE(user1_id, user2_id)
+);
+
 -- existing users
 INSERT INTO users (id, username, email, password) VALUES (4262325532, 'johndoe', 'johndoe@gmail.com', 'password')
 ON CONFLICT(id) DO UPDATE SET username=excluded.username, email=excluded.email, password=excluded.password;

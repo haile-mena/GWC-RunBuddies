@@ -1,17 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Runner's Dashboard</title>
-    <link href="/static/style/dash.css" rel="stylesheet" type="text/css"/>
+    <link href="/static/style/dash.css" rel="stylesheet" type="text/css" />
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar Navigation -->
         <nav class="sidebar">
             <div class="profile-section">
-                <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Profile" class="profile-pic">
+                <img src="{{ url_for('static', filename='images/default-avatar.png') }}" alt="Profile"
+                    class="profile-pic">
                 <h3>{{ current_user.name }}</h3>
             </div>
             <ul class="nav-links">
@@ -20,13 +23,14 @@
                 <li><a href="#" data-section="messages">Messages</a></li>
                 <li><a href="#" data-section="runs">My Runs</a></li>
                 <li><a href="#" data-section="settings">Settings</a></li>
+                <li><a href="#" data-section="logout">Logout</a></li>
             </ul>
         </nav>
 
         <!-- Main Content Area -->
         <main class="main-content">
             <!-- Dashboard Overview -->
-            <section id="dashboard-section" class="content-section">
+            <section id="dashboard-section" class="content-section ">
                 <h2>Dashboard</h2>
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -49,12 +53,28 @@
                 <h2>Your Matches</h2>
                 <div class="matches-grid" id="matches-container">
                     <!-- Matches will be populated by JavaScript -->
+                    <button class="message-button" data-match-id="${match.id}" data-recipient-name="${match.name}">
+                        Message
+                    </button>
                 </div>
             </section>
 
             <!-- Messages Section -->
             <section id="messages-section" class="content-section hidden">
                 <h2>Messages</h2>
+                <div class="chat-interface hidden" id="chat-interface">
+                    <div class="chat-header">
+                        <button class="back-button" onclick="closeChat()">←</button>
+                        <h3 id="chat-recipient">Chat with <span></span></h3>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will be populated here -->
+                    </div>
+                    <form class="chat-input-form" id="chat-form">
+                        <input type="text" id="chat-input" placeholder="Type your message...">
+                        <button type="submit">Send</button>
+                    </form>
+                </div>
                 <div class="messages-container" id="messages-container">
                     <!-- Messages will be populated by JavaScript -->
                 </div>
@@ -67,117 +87,126 @@
                     <!-- Runs will be populated by JavaScript -->
                 </div>
             </section>
+            <!-- Settings Section -->
+            <section id="settings-section" class="content-section hidden">
+                <h2>Profile Settings</h2>
+
+                <form id="settings-form" class="settings-form">
+                    <div class="settings-group">
+                        <h3>Basic Information</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="age">Age</label>
+                                <input type="number" id="age" name="age" min="18" max="100">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select id="gender" name="gender">
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                    <option value="prefer_not_to_say">Prefer not to say</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="location">Location</label>
+                                <input type="text" id="location" name="location">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>Running Preferences</h3>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="running_level">Running Level</label>
+                                <select id="running_level" name="running_level">
+                                    <option value="beginner">Beginner</option>
+                                    <option value="intermediate">Intermediate</option>
+                                    <option value="advanced">Advanced</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="preferred_distance">Preferred Distance</label>
+                                <select id="preferred_distance" name="preferred_distance">
+                                    <option value="5k">5K</option>
+                                    <option value="10k">10K</option>
+                                    <option value="half_marathon">Half Marathon</option>
+                                    <option value="marathon">Marathon</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="running_frequency">Running Frequency</label>
+                                <select id="running_frequency" name="running_frequency">
+                                    <option value="1-2">1-2 times per week</option>
+                                    <option value="3-4">3-4 times per week</option>
+                                    <option value="5+">5+ times per week</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="preferred_pace">Preferred Pace</label>
+                                <input type="text" id="preferred_pace" name="preferred_pace" placeholder="min/km">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="preferred_terrain">Preferred Terrain</label>
+                                <select id="preferred_terrain" name="preferred_terrain">
+                                    <option value="road">Road</option>
+                                    <option value="trail">Trail</option>
+                                    <option value="track">Track</option>
+                                    <option value="mixed">Mixed</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group checkbox-group">
+                            <label>
+                                <input type="checkbox" id="race_participation" name="race_participation">
+                                Interested in participating in races
+                            </label>
+                            <br>
+                            <label>
+                                <input type="checkbox" id="group_runs" name="group_runs">
+                                Interested in group runs
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-group">
+                        <h3>About Me</h3>
+                        <div class="form-group">
+                            <label for="bio">Bio</label>
+                            <textarea id="bio" name="bio" rows="4"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="goals">Running Goals</label>
+                            <textarea id="goals" name="goals" rows="4"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                    </div>
+                </form>
+            </section>
+            <!--Logout Section-->
+            <section id="logout-section" class="content-section hidden">
+                <h2>Logout</h2>
+                <form method="GET" action="{{ url_for('logout') }}">
+                <p>Are you sure you want to logout?</p>
+                <button class="btn btn-primary" id="logout-button">Logout</button>
+                </form>
+            </section>
         </main>
 
-        <!-- Add this section to your dashboard.html template -->
-<section id="settings-section" class="content-section hidden">
-    <h2>Profile Settings</h2>
-    
-    <form id="settings-form" class="settings-form">
-        <div class="settings-group">
-            <h3>Basic Information</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="age">Age</label>
-                    <input type="number" id="age" name="age" min="18" max="100">
-                </div>
-                
-                <div class="form-group">
-                    <label for="gender">Gender</label>
-                    <select id="gender" name="gender">
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                        <option value="other">Other</option>
-                        <option value="prefer_not_to_say">Prefer not to say</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="location">Location</label>
-                    <input type="text" id="location" name="location">
-                </div>
-            </div>
-        </div>
-        
-        <div class="settings-group">
-            <h3>Running Preferences</h3>
-            <div class="form-grid">
-                <div class="form-group">
-                    <label for="running_level">Running Level</label>
-                    <select id="running_level" name="running_level">
-                        <option value="beginner">Beginner</option>
-                        <option value="intermediate">Intermediate</option>
-                        <option value="advanced">Advanced</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="preferred_distance">Preferred Distance</label>
-                    <select id="preferred_distance" name="preferred_distance">
-                        <option value="5k">5K</option>
-                        <option value="10k">10K</option>
-                        <option value="half_marathon">Half Marathon</option>
-                        <option value="marathon">Marathon</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="running_frequency">Running Frequency</label>
-                    <select id="running_frequency" name="running_frequency">
-                        <option value="1-2">1-2 times per week</option>
-                        <option value="3-4">3-4 times per week</option>
-                        <option value="5+">5+ times per week</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label for="preferred_pace">Preferred Pace</label>
-                    <input type="text" id="preferred_pace" name="preferred_pace" placeholder="min/km">
-                </div>
-                
-                <div class="form-group">
-                    <label for="preferred_terrain">Preferred Terrain</label>
-                    <select id="preferred_terrain" name="preferred_terrain">
-                        <option value="road">Road</option>
-                        <option value="trail">Trail</option>
-                        <option value="track">Track</option>
-                        <option value="mixed">Mixed</option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group checkbox-group">
-                <label>
-                    <input type="checkbox" id="race_participation" name="race_participation">
-                    Interested in participating in races
-                </label>
-                
-                <label>
-                    <input type="checkbox" id="group_runs" name="group_runs">
-                    Interested in group runs
-                </label>
-            </div>
-        </div>
-        
-        <div class="settings-group">
-            <h3>About Me</h3>
-            <div class="form-group">
-                <label for="bio">Bio</label>
-                <textarea id="bio" name="bio" rows="4"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="goals">Running Goals</label>
-                <textarea id="goals" name="goals" rows="4"></textarea>
-            </div>
-        </div>
-        
-        <div class="button-group">
-            <button type="submit" class="btn btn-primary">Save Changes</button>
-            <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
-        </div>
-    </form>
-</section>
+
     </div>
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
 </body>

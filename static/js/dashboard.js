@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <h3>${match.name}</h3>
                     <p>${match.age} years old</p>
                     <p>${match.match_percentage}% Match</p>
-                    <button onclick="startChat(${match.id})" class="btn">Message</button>
+                    <button onclick="startChat(${match.id}, '${match.name}')" class="btn">Message</button>
                 </div>
             `).join('');
             
@@ -97,12 +97,49 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Chat functionality
-function startChat(matchId) {
-    // Implement chat functionality here
-    console.log(`Starting chat with match ID: ${matchId}`);
+let currentChatMatch = null;
+
+function startChat(matchId, matchName) {
+    currentChatMatch = matchId;
+    
+    // Show chat interface and hide messages list
+    document.getElementById('messages-container').classList.add('hidden');
+    document.getElementById('chat-interface').classList.remove('hidden');
+    
+    // Set recipient name
+    document.querySelector('#chat-recipient span').textContent = matchName;
+    
+    // Load chat history
+    loadChatMessages(matchId);
 }
 
-// Add this to your dashboard.js file
+function closeChat() {
+    currentChatMatch = null;
+    document.getElementById('messages-container').classList.remove('hidden');
+    document.getElementById('chat-interface').classList.add('hidden');
+}
+
+async function loadChatMessages(matchId) {
+    try {
+        const response = await fetch(`/api/chat/${matchId}`);
+        const data = await response.json();
+        
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML = data.messages.map(msg => `
+            <div class="message ${msg.sender_name === currentUser ? 'sent' : 'received'}">
+                <div class="message-content">
+                    <p>${msg.content}</p>
+                    <small>${new Date(msg.timestamp).toLocaleString()}</small>
+                </div>
+            </div>
+        `).join('');
+        
+        // Scroll to bottom
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (error) {
+        console.error('Error loading chat messages:', error);
+    }
+}
 
 // Load user settings
 async function loadUserSettings() {
@@ -208,3 +245,106 @@ document.addEventListener('DOMContentLoaded', function() {
         settingsLink.addEventListener('click', loadUserSettings);
     }
 });
+
+// Function to handle opening the chat interface
+function openChat(matchId, recipientName) {
+    // Hide the messages container and show the chat interface
+    document.getElementById('messages-container').classList.add('hidden');
+    document.getElementById('chat-interface').classList.remove('hidden');
+    
+    // Update the chat recipient name
+    document.querySelector('#chat-recipient span').textContent = recipientName;
+    
+    // Store the current match ID for sending messages
+    document.getElementById('chat-form').dataset.matchId = matchId;
+    
+    // Load existing messages
+    loadChatMessages(matchId);
+}
+
+// Function to handle closing the chat interface
+function closeChat() {
+    document.getElementById('chat-interface').classList.add('hidden');
+    document.getElementById('messages-container').classList.remove('hidden');
+}
+
+// Function to load chat messages
+async function loadChatMessages(matchId) {
+    try {
+        const response = await fetch(`/api/chat/${matchId}`);
+        const data = await response.json();
+        
+        const chatMessages = document.getElementById('chat-messages');
+        chatMessages.innerHTML = ''; // Clear existing messages
+        
+        data.messages.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${message.sender_id === getCurrentUserId() ? 'sent' : 'received'}`;
+            messageElement.innerHTML = `
+                <div class="message-content">
+                    <span class="sender">${message.sender_name}</span>
+                    <p>${message.content}</p>
+                    <span class="timestamp">${new Date(message.timestamp).toLocaleTimeString()}</span>
+                </div>
+            `;
+            chatMessages.appendChild(messageElement);
+        });
+        
+        // Scroll to the bottom of the messages
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (error) {
+        console.error('Error loading messages:', error);
+    }
+}
+
+// Add click event listeners to message buttons
+document.addEventListener('DOMContentLoaded', () => {
+    // Add event listeners to all message buttons
+    const messageButtons = document.querySelectorAll('.message-button');
+    messageButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const matchId = button.dataset.matchId;
+            const recipientName = button.dataset.recipientName;
+            openChat(matchId, recipientName);
+        });
+    });
+    
+    // Handle chat form submission
+    const chatForm = document.getElementById('chat-form');
+    chatForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const input = document.getElementById('chat-input');
+        const message = input.value.trim();
+        const matchId = chatForm.dataset.matchId;
+        
+        if (message) {
+            try {
+                const response = await fetch('/api/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        match_id: matchId,
+                        content: message
+                    })
+                });
+                
+                if (response.ok) {
+                    input.value = '';
+                    loadChatMessages(matchId); // Reload messages to show the new one
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            }
+        }
+    });
+});
+
+// Helper function to get current user ID
+function getCurrentUserId() {
+    // This should be implemented based on how you store the current user's ID
+    // For example, you might store it in a data attribute on the body element
+    return document.body.dataset.userId;
+}

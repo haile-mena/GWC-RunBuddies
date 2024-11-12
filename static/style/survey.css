@@ -73,7 +73,7 @@ body {
     margin-right: 8px;
 }
 
-.button {
+#submit-btn {
     width: 100%;
     padding: 1rem;
     background-color: #4CAF50;
@@ -85,6 +85,6 @@ body {
     transition: background-color 0.3s ease;
 }
 
-.button:hover {
+#submit-btn:hover {
     background-color: #45a049;
 }
